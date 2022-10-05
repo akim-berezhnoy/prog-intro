@@ -1,6 +1,4 @@
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
@@ -59,8 +57,6 @@ public class Reverse {
              InputMismatchException не вылавливаю, мой сканнер его не кидает.
              В такой ситуации метод .next<token name> ожидаемо вернёт null.
             */
-        } catch (FileNotFoundException e) {
-            System.out.println("Error occurred. Input file does not exist: " + e.getLocalizedMessage());
         } catch (IOException e) {
             System.out.println("Error occurred. Input or output operation has failed: " + e.getLocalizedMessage());
         }

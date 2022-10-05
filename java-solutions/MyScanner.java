@@ -39,6 +39,7 @@ public class MyScanner {
         return next(Criteria.LETTER);
     }
 
+    // Код, выделяющий числа и слова, общий
     private String next(Criteria criteria) throws IOException {
         this.token.setLength(0);
         while (true) {
