@@ -6,3 +6,5 @@ _*
 
 # Do not store .class files
 *.class
+
+./**/Makefile
