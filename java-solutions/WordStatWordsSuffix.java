@@ -67,6 +67,8 @@ public class WordStatWordsSuffix {
             */
         } catch (FileNotFoundException e) {
             System.out.println("Error occurred. Input file does not exist: " + e.getLocalizedMessage());
+        } catch (SecurityException e){
+            System.out.println("Error occurred. Security violation: " + e.getLocalizedMessage());
         } catch (IOException e) {
             System.out.println("Error occurred. Input or output operation has failed: " + e.getLocalizedMessage());
         }
