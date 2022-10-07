@@ -4,9 +4,8 @@ import java.nio.charset.Charset;
 public class MyScanner {
 
     private enum Criteria {
-        LETTER,
-        INTEGER,
-        LINE
+        WORD,
+        INTEGER
     }
 
     private final Reader reader;
@@ -29,57 +28,75 @@ public class MyScanner {
         this(new FileInputStream(source), charset);
     }
 
-    public String nextLine() throws IOException {
-        return next(Criteria.LINE);
+    public boolean hasThisLine() throws IOException {
+        return this.capacity != -1;
     }
-    public String nextInt() throws IOException {
-        return next(Criteria.INTEGER);
+    public boolean hasNextInCurrentLine(Criteria criteria) throws IOException {
+        if (this.capacity == -1) return false;
+        while (thisCharIsInvalid(criteria)) {
+            if (this.buffer[this.iterator] == '\n') {
+                this.iterator++;
+                if (this.iterator == this.capacity) createNewBuffer();
+                return false;
+            }
+            this.iterator++;
+            if (this.iterator == this.capacity) createNewBuffer();
+            if (this.capacity == -1) return false;
+        }
+        return true;
     }
-    public String nextWord() throws IOException {
-        return next(Criteria.LETTER);
+    public boolean hasNextIntInCurrentLine() throws IOException {
+        return hasNextInCurrentLine(Criteria.INTEGER);
+    }
+    public boolean hasNextWordInCurrentLine() throws IOException {
+        return hasNextInCurrentLine(Criteria.WORD);
     }
 
-    // Код, выделяющий числа и слова, общий
-    private String next(Criteria criteria) throws IOException {
+    public String readLine() throws IOException {
         this.token.setLength(0);
         while (true) {
-            if (this.iterator == this.capacity) {
-                this.capacity = this.reader.read(this.buffer);
-                this.iterator = 0;
-                if (this.capacity == -1) return this.token.toString();
+            if (this.buffer[this.iterator] != '\n') {
+                this.token.append(this.buffer[this.iterator]);
+                this.iterator++;
+                if (this.iterator == this.capacity) createNewBuffer();
+                if (this.capacity == -1) break;
+            } else {
+                this.iterator++;
+                if (this.iterator == this.capacity) createNewBuffer();
+                break;
             }
-            if (this.capacity == -1) return null;
-            if (thisCharIsInvalid(criteria)) {
-                // Заметим, что при выводе следующей строки, в случае встречи с двумя подряд идущими сепараторами,
-                // необходимо вывести пустую строчку, а в случае с числом, словом и т.д. мы ожидаем, что программа
-                // пойдет дальше, пока не найдем подходящюю последовательность символов или не встретим конец потока.
-                if (criteria != Criteria.LINE) {
-                    while (thisCharIsInvalid(criteria) && (this.capacity != -1)) {
-                        this.iterator++;
-                        if (this.iterator == this.capacity) {
-                            this.capacity = this.reader.read(this.buffer);
-                            this.iterator = 0;
-                        }
-                    }
-                } else {
-                    this.iterator++;
-                }
-                if (criteria == Criteria.LINE) return this.token.toString();
-                if (!this.token.isEmpty()) return this.token.toString();
-            }
-            this.token.append(this.buffer[this.iterator]);
-            iterator++;
         }
+        return this.token.toString();
+    }
+    public String readWord() throws IOException {
+        return read(Criteria.WORD);
+    }
+    public int readInt() throws IOException {
+        return Integer.parseInt(read(Criteria.INTEGER));
     }
 
+    private int createNewBuffer() throws IOException {
+        this.capacity = this.reader.read(this.buffer);
+        this.iterator = 0;
+        return this.capacity;
+    }
+    private String read(Criteria criteria) throws IOException {
+        this.token.setLength(0);
+        while (!thisCharIsInvalid(criteria)) {
+            this.token.append(this.buffer[this.iterator]);
+            this.iterator++;
+            if (this.iterator == this.capacity) {
+                if (createNewBuffer() == -1) return this.token.toString();
+            }
+        }
+        return this.token.toString();
+    }
     private boolean thisCharIsInvalid(Criteria criteria) {
         if (criteria == Criteria.INTEGER) {
             return (!Character.isDigit(this.buffer[this.iterator]) && (this.buffer[this.iterator] != '-'));
-        } else if (criteria == Criteria.LETTER) {
+        } else if (criteria == Criteria.WORD) {
             return (!Character.isLetter(this.buffer[this.iterator]) && this.buffer[this.iterator] != '\'' &&
                     (Character.getType(this.buffer[this.iterator]) != Character.DASH_PUNCTUATION));
-        } else if (criteria == Criteria.LINE) {
-            return (this.buffer[this.iterator] == '\n');
         }
         return false;
     }

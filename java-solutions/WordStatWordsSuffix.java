@@ -25,24 +25,23 @@ public class WordStatWordsSuffix {
         try {
             MyScanner scanner = new MyScanner(new File(args[0]), StandardCharsets.UTF_8);
             try {
-                String word = scanner.nextWord();
-                while (word != null) {
-                    if (word.length() >= 3) word = word.substring(word.length()-3);
-                    word = word.toLowerCase();
-                    int index = index(word, wordsIter, words);
-                    if (index != -1) {
-                        counters[index]++;
-                        word = scanner.nextWord();
-                        continue;
+                while (scanner.hasThisLine()){
+                    while (scanner.hasNextWordInCurrentLine()) {
+                        String word = scanner.readWord().toLowerCase();
+                        if (word.length() >= 3) word = word.substring(word.length()-3);
+                        int index = index(word, wordsIter, words);
+                        if (index != -1) {
+                            counters[index]++;
+                            continue;
+                        }
+                        wordsIter++;
+                        if (wordsIter == words.length) {
+                            words = Arrays.copyOf(words, words.length*2+1);
+                            counters = Arrays.copyOf(counters, counters.length*2+1);
+                        }
+                        words[wordsIter] = word;
+                        counters[wordsIter]++;
                     }
-                    wordsIter++;
-                    if (wordsIter == words.length) {
-                        words = Arrays.copyOf(words, words.length*2+1);
-                        counters = Arrays.copyOf(counters, counters.length*2+1);
-                    }
-                    words[wordsIter] = word;
-                    counters[wordsIter]++;
-                    word = scanner.nextWord();
                 }
             } finally {
                 scanner.close();
@@ -61,10 +60,6 @@ public class WordStatWordsSuffix {
             } finally {
                 writer.close();
             }
-            /*
-             InputMismatchException не вылавливаю, мой сканнер его не кидает.
-             В такой ситуации метод .next<token name> ожидаемо вернёт null.
-            */
         } catch (FileNotFoundException e) {
             System.out.println("Error occurred. Input file does not exist: " + e.getLocalizedMessage());
         } catch (SecurityException e){

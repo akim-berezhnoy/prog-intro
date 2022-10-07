@@ -12,44 +12,39 @@ public class WordStatInput {
     public static void main(String[] args) {
         String[] words = new String[10];
         int[] counters = new int[10];
-        int wordsIter = -1;
+        int wordsIterator = -1;
         try {
             MyScanner scanner = new MyScanner(new File(args[0]), StandardCharsets.UTF_8);
             try {
-                String word = scanner.nextWord();
-                while (word != null) {
-                    word = word.toLowerCase();
-                    int index = index(word, wordsIter, words);
-                    if (index != -1) {
-                        counters[index]++;
-                        word = scanner.nextWord();
-                        continue;
+                while (scanner.hasThisLine()) {
+                    while (scanner.hasNextWordInCurrentLine()) {
+                        String word = scanner.readWord().toLowerCase();
+                        int index = index(word, wordsIterator, words);
+                        if (index != -1) {
+                            counters[index]++;
+                            continue;
+                        }
+                        wordsIterator++;
+                        if (wordsIterator == words.length) {
+                            words = Arrays.copyOf(words, words.length * 2 + 1);
+                            counters = Arrays.copyOf(counters, counters.length * 2 + 1);
+                        }
+                        words[wordsIterator] = word;
+                        counters[wordsIterator]++;
                     }
-                    wordsIter++;
-                    if (wordsIter == words.length) {
-                        words = Arrays.copyOf(words, words.length*2+1);
-                        counters = Arrays.copyOf(counters, counters.length*2+1);
-                    }
-                    words[wordsIter] = word;
-                    counters[wordsIter]++;
-                    word = scanner.nextWord();
                 }
             } finally {
                 scanner.close();
             }
             BufferedWriter writer = new BufferedWriter(new FileWriter(args[1], StandardCharsets.UTF_8));
             try {
-                for (int i = 0; i <= wordsIter; i++) {
+                for (int i = 0; i <= wordsIterator; i++) {
                     writer.write(words[i] + " " + counters[i]);
                     writer.newLine();
                 }
             } finally {
                 writer.close();
             }
-            /*
-             InputMismatchException не вылавливаю, мой сканнер его не кидает.
-             В такой ситуации метод .next<token name> ожидаемо вернёт null.
-            */
         } catch (FileNotFoundException e) {
             System.out.println("Error occurred. Input file does not exist: " + e.getLocalizedMessage());
         } catch (SecurityException e){
