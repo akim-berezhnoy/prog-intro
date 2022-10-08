@@ -1,7 +1,7 @@
 import java.io.*;
 import java.nio.charset.Charset;
 
-public class MyScanner {
+public class MyScanner implements AutoCloseable {
 
     private enum Criteria {
         WORD,
@@ -17,7 +17,7 @@ public class MyScanner {
     public MyScanner(InputStream source, Charset charset) throws IOException {
         this.reader = new InputStreamReader(source, charset);
         this.token = new StringBuilder();
-        this.buffer = new char[64];
+        this.buffer = new char[128];
         this.capacity = this.reader.read(this.buffer);
         this.iterator = 0;
     }
@@ -101,6 +101,7 @@ public class MyScanner {
         return false;
     }
 
+    @Override
     public void close() throws IOException {
         this.reader.close();
     }
