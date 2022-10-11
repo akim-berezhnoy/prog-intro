@@ -68,9 +68,11 @@ public class MyScanner implements AutoCloseable {
         }
         return this.token.toString();
     }
+
     public String readWord() throws IOException {
         return read(Criteria.WORD);
     }
+
     public int readInt() throws IOException {
         return Integer.parseInt(read(Criteria.INTEGER));
     }
