@@ -1,6 +1,6 @@
 package markup;
 
-public interface Markdownable {
+public interface Markable {
     void toMarkdown(StringBuilder stringbuilder);
 
     void toTex(StringBuilder stringbuilder);

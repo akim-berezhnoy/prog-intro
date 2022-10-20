@@ -1,6 +1,6 @@
 package markup;
 
-public class Text implements Markdownable {
+public class Text implements Markable {
 
     final String value;
 

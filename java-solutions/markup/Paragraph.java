@@ -2,24 +2,24 @@ package markup;
 
 import java.util.List;
 
-public class Paragraph implements Markdownable {
+public class Paragraph implements Markable {
 
-    private final List<Markdownable> paragraph;
+    private final List<Markable> paragraph;
 
-    public Paragraph(List<Markdownable> paragraph) {
+    public Paragraph(List<Markable> paragraph) {
         this.paragraph = paragraph;
     }
 
     @Override
     public void toMarkdown(StringBuilder stringBuilder) {
-        for (Markdownable textElement : paragraph) {
+        for (Markable textElement : paragraph) {
             textElement.toMarkdown(stringBuilder);
         }
     }
 
     @Override
     public void toTex(StringBuilder stringBuilder) {
-        for (Markdownable textElement : paragraph) {
+        for (Markable textElement : paragraph) {
             textElement.toTex(stringBuilder);
         }
     }
