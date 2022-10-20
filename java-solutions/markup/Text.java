@@ -1,4 +1,4 @@
-package Markdown.HT;
+package markup;
 
 public class Text implements Markdownable {
 
@@ -10,5 +10,8 @@ public class Text implements Markdownable {
 
     @Override
     public void toMarkdown(StringBuilder stringbuilder) { stringbuilder.append(value); }
+
+    @Override
+    public void toTex(StringBuilder stringBuilder) { stringBuilder.append(value); }
 
 }

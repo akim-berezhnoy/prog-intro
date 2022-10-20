@@ -1,10 +1,12 @@
-package Markdown.HT;
+package markup;
 
 import java.util.List;
 
 abstract class MarkableText extends AbstractText {
 
     protected String mark;
+
+    protected String texMark;
 
     protected MarkableText(List<Markdownable> list) {
         super(list);
@@ -17,5 +19,14 @@ abstract class MarkableText extends AbstractText {
             textElement.toMarkdown(stringBuilder);
         }
         stringBuilder.append(mark);
+    }
+
+    @Override
+    public void toTex(StringBuilder stringBuilder) {
+        stringBuilder.append("\\").append(texMark).append("{");
+        for (Markdownable textElement : super.list) {
+            textElement.toTex(stringBuilder);
+        }
+        stringBuilder.append("}");
     }
 }

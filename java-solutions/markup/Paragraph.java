@@ -1,4 +1,4 @@
-package Markdown.HT;
+package markup;
 
 import java.util.List;
 
@@ -14,6 +14,13 @@ public class Paragraph implements Markdownable {
     public void toMarkdown(StringBuilder stringBuilder) {
         for (Markdownable textElement : paragraph) {
             textElement.toMarkdown(stringBuilder);
+        }
+    }
+
+    @Override
+    public void toTex(StringBuilder stringBuilder) {
+        for (Markdownable textElement : paragraph) {
+            textElement.toTex(stringBuilder);
         }
     }
 
