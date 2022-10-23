@@ -11,8 +11,9 @@ public class WsppCountPosition {
                 DynamicIntArray arr1 = o1.getValue();
                 DynamicIntArray arr2 = o2.getValue();
                 if (arr1.getLength() == arr2.getLength()) {
-                    // ctrl + alt + l
-                    if (arr1.get(0) == arr2.get(0)) return arr1.get(1) - arr2.get(1);
+                    if (arr1.get(0) == arr2.get(0)) {
+                        return arr1.get(1) - arr2.get(1);
+                    }
                     return arr1.get(0) - arr2.get(0);
                 }
                 return arr1.getLength() - arr2.getLength();
@@ -35,16 +36,11 @@ public class WsppCountPosition {
                     words.get(word).add(++numberCounter);
                 }
             }
-            StringBuilder viewBuilder = new StringBuilder();
             for (Map.Entry<String, DynamicIntArray> e : sorted(words)) {
-                viewBuilder.setLength(0);
-                viewBuilder.append(e.getKey()).append(" ").append(e.getValue().getLength()/2);
+                writer.write(e.getKey() + " " + e.getValue().getLength()/2);
                 for (int index = 0; index < e.getValue().getLength(); index+=2) {
-                    // not store string
-                    // write immediatelly
-                    viewBuilder.append(" ").append(e.getValue().get(index)).append(":").append(e.getValue().get(index+1));
+                    writer.write(" " + e.getValue().get(index) + ":" + e.getValue().get(index+1));
                 }
-                writer.write(viewBuilder.toString());
                 writer.newLine();
             }
         } catch (FileNotFoundException e) {
