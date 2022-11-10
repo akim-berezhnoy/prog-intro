@@ -5,12 +5,12 @@ import java.util.*;
 import java.nio.charset.StandardCharsets;
 
 public class Md2Html {
-    private static ExclusiveTree marks = new ExclusiveTree();
+    private static final md2html.Md2Html.ExclusiveTree marks = new md2html.Md2Html.ExclusiveTree();
     private static String currentLine;
-    private static Set<String> openedButNotClosed = new HashSet<>();
-    private static Set<String> toClose = new HashSet<>();
-    private static Deque<Pair> marksDeque = new ArrayDeque<>();
-    private static Map<Character, String> special = new HashMap<>();
+    private static final Set<String> openedButNotClosed = new HashSet<>();
+    private static final Set<String> toClose = new HashSet<>();
+    private static final Deque<md2html.Md2Html.Pair> marksDeque = new ArrayDeque<>();
+    private static final Map<Character, String> special = new HashMap<>();
 
     private static void toggle(Set<String> set, String s) {
         if (set.contains(s)) {
@@ -21,7 +21,7 @@ public class Md2Html {
     }
     private static int writeSpecials(StringBuilder chunk, BufferedWriter writer, int start) throws IOException {
         while (!marksDeque.isEmpty() && special.containsKey(marksDeque.getFirst().mark.charAt(0))) {
-            Pair first = marksDeque.getFirst();
+            md2html.Md2Html.Pair first = marksDeque.getFirst();
             writer.append(chunk.substring(start, first.index)).write(special.get(first.mark.charAt(0)));
             start = first.index + first.mark.length();
             marksDeque.removeFirst();
@@ -39,7 +39,7 @@ public class Md2Html {
             if (inputMarkLength != 0) {
                 String currentMark = chunk.substring(i, i + inputMarkLength);
                 toggle(openedButNotClosed, currentMark);
-                marksDeque.add(new Pair(currentMark, i));
+                marksDeque.add(new md2html.Md2Html.Pair(currentMark, i));
                 if (marksDeque.size() > 0) {
                     start = writeSpecials(chunk, writer, start);
                     if (marksDeque.size() > 1 && marksDeque.getFirst().mark.equals(currentMark)) {
@@ -49,7 +49,7 @@ public class Md2Html {
                                 marksDeque.removeFirst();
                                 toggle(openedButNotClosed, marksDeque.getFirst().mark);
                             }
-                            Pair first = marksDeque.getFirst();
+                            md2html.Md2Html.Pair first = marksDeque.getFirst();
                             String mark = first.mark;
                             writer.write(chunk.substring(start, first.index));
                             if (!chunk.substring(start, first.index).contains("\\")) {
@@ -73,18 +73,20 @@ public class Md2Html {
             }
             i++;
         }
-        if (chunk.substring(start, chunk.length()).contains("\\")) {
-            writer.append(chunk.substring(start, chunk.lastIndexOf("\\"))).write(chunk.substring(chunk.lastIndexOf("\\")+1, chunk.length()));
-        } else {
-            writer.write(chunk.substring(start, chunk.length()));
+        String s = chunk.substring(start);
+        for (int j = 0; j < s.length(); j++) {
+            if (s.charAt(j) != '\\') {
+                writer.append(s.charAt(j));
+            }
         }
+        writer.write("");
     }
     private static int tryToParseMark(StringBuilder sb, int startIndex) {
         int iterator = startIndex;
         if (special.containsKey(sb.charAt(iterator))) {
             return 1;
         }
-        Node currentNode = marks.root.outbounds.getOrDefault(sb.charAt(iterator), null);
+        md2html.Md2Html.Node currentNode = marks.root.outbounds.getOrDefault(sb.charAt(iterator), null);
         while (currentNode != null) {
             if (startIndex != 0 && sb.charAt(startIndex-1) == '\\') {
                 currentNode = null;
@@ -111,7 +113,7 @@ public class Md2Html {
         if (special.containsKey(sb.charAt(iterator))) {
             return sb.substring(iterator, iterator + 1);
         }
-        Node currentNode = marks.root.outbounds.getOrDefault(sb.charAt(iterator), null);
+        md2html.Md2Html.Node currentNode = marks.root.outbounds.getOrDefault(sb.charAt(iterator), null);
         String mark;
         while (true) {
             iterator++;
@@ -150,6 +152,7 @@ public class Md2Html {
             marks.add("__", "strong");
             marks.add("--", "s");
             marks.add("`", "code");
+            marks.add("++", "u");
             special.put('<', "&lt;");
             special.put('>', "&gt;");
             special.put('&', "&amp;");
