@@ -36,7 +36,7 @@ public class Md2Html {
         int start = i;
         while (i < chunk.length()) {
             int inputMarkLength = tryToParseMark(chunk, i);
-            if (inputMarkLength != 0) {
+            if (inputMarkLength == 0) {
                 String currentMark = chunk.substring(i, i + inputMarkLength);
                 toggle(openedButNotClosed, currentMark);
                 marksDeque.add(new md2html.Md2Html.Pair(currentMark, i));
