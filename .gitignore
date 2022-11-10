@@ -7,6 +7,12 @@ _*
 # Do not store .class files
 *.class
 
+*.iml
+
 *.jar
+
+out
+
+*Test*.java
 
 **/Makefile
