@@ -8,7 +8,7 @@ import java.util.Set;
 public class Game {
     private final List<Player> players;
     private final Set<Player> losers = new HashSet<>();
-    static final private int MAX_PLAYERS_NUMBER = 5;
+    static final private int MAX_PLAYERS_NUMBER = 8;
 
     private final boolean log;
 
@@ -21,7 +21,7 @@ public class Game {
         return MAX_PLAYERS_NUMBER;
     }
 
-    public void play(final Board board) {
+    public int play(final Board board) {
         while (true) {
             for (Player player : players) {
                 if (!losers.contains(player)) {
@@ -36,12 +36,12 @@ public class Game {
                         case WIN -> {
                             System.out.println(board);
                             System.out.printf("Winner winner chicken dinner!\nCongrats, Player #%d!%n".formatted(outcome.getCauser().getId()));
-                            return;
+                            return outcome.getCauser().getId();
                         }
                         case DRAW -> {
                             System.out.println(board);
                             System.out.printf("Draw. Everybody won and everybody lost!%n");
-                            return;
+                            return 0;
                         }
                     }
                 }

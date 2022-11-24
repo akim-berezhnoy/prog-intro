@@ -41,6 +41,8 @@ public class HumanPlayer extends Player{
                         3 2
                         4 1
                         """);
+                in.next();
+                in.next();
             }
         }
     }
