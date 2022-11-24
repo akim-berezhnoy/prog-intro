@@ -25,23 +25,32 @@ public class Game {
         while (true) {
             for (Player player : players) {
                 if (!losers.contains(player)) {
-                    final Outcome outcome = makeMove(board, player);
-                    final Result result = outcome.getResult();
-                    switch (result) {
-                        case LOSE -> {
-                            System.out.printf("What a pity. Player #%d's last move was forbidden and he lefts our game :( %n", player.getId());
-                            losers.add(outcome.getCauser());
-                            board.removeLastTurn();
-                        }
-                        case WIN -> {
-                            System.out.println(board);
-                            System.out.printf("Winner winner chicken dinner!\nCongrats, Player #%d!%n".formatted(outcome.getCauser().getId()));
-                            return outcome.getCauser().getId();
-                        }
-                        case DRAW -> {
-                            System.out.println(board);
-                            System.out.printf("Draw. Everybody won and everybody lost!%n");
-                            return 0;
+                    loop: while (true) {
+                        final Outcome outcome = makeMove(board, player);
+                        final Result result = outcome.getResult();
+                        switch (result) {
+                            case LOSE -> {
+                                System.out.printf("What a pity. Player #%d's last move was forbidden and he lefts our game :( %n", player.getId());
+                                losers.add(outcome.getCauser());
+                                board.removeLastTurn();
+                                return -1;
+                            }
+                            case WIN -> {
+                                System.out.println(board);
+                                System.out.printf("Winner winner chicken dinner!\nCongrats, Player #%d!%n".formatted(outcome.getCauser().getId()));
+                                return outcome.getCauser().getId();
+                            }
+                            case DRAW -> {
+                                System.out.println(board);
+                                System.out.printf("Draw. Everybody won and everybody lost!%n");
+                                return 0;
+                            }
+                            case EXTRA -> {
+                                System.out.println("GOOD! Make extra move.\n");
+                            }
+                            case UNKNOWN -> {
+                                break loop;
+                            }
                         }
                     }
                 }

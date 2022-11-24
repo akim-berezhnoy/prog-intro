@@ -1,5 +1,5 @@
 package mnkGame;
 
 public enum Result {
-    UNKNOWN, WIN, DRAW, LOSE
+    UNKNOWN, WIN, DRAW, LOSE, EXTRA
 }

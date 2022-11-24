@@ -10,6 +10,8 @@ public class mnkBoard implements Board, Position {
 
     private int blanks;
 
+    private final int STREAK_TO_EXTRA_MOVE = 4;
+
     private final Cell[][] field;
     private final Deque<Symbol> turns;
 
@@ -49,7 +51,6 @@ public class mnkBoard implements Board, Position {
         turns.removeFirst();
     }
 
-
     @Override
     public Position getPosition() {
         return this;
@@ -61,18 +62,21 @@ public class mnkBoard implements Board, Position {
             return Result.LOSE;
         }
         field[move.getRow()][move.getCol()].setCondition(move.getSymbol());
-        if (isWinningMove(move)) {
+        if (isStreakMove(move, k)) {
             return Result.WIN;
         }
         this.blanks--;
         if (blanks == 0) {
             return Result.DRAW;
         }
+        if (isStreakMove(move, STREAK_TO_EXTRA_MOVE)) {
+            return Result.EXTRA;
+        }
         turns.addLast(turns.removeFirst());
         return Result.UNKNOWN;
     }
 
-    private boolean isWinningMove(Move lastMove) {
+    private boolean isStreakMove(Move lastMove, int st) {
         int row = lastMove.getRow();
         int col = lastMove.getCol();
         int streak = 0;
@@ -83,7 +87,7 @@ public class mnkBoard implements Board, Position {
             row--;
             streak++;
         }
-        if (streak >= k) {
+        if (streak >= st) {
             return true;
         }
         //
@@ -97,7 +101,7 @@ public class mnkBoard implements Board, Position {
             col--;
             streak++;
         }
-        if (streak >= k) {
+        if (streak >= st) {
             return true;
         }
         //
@@ -113,7 +117,7 @@ public class mnkBoard implements Board, Position {
             col--;
             streak++;
         }
-        if (streak >= k) {
+        if (streak >= st) {
             return true;
         }
         //
@@ -129,7 +133,7 @@ public class mnkBoard implements Board, Position {
             col++;
             streak++;
         }
-        return streak >= k;
+        return streak >= st;
     }
 
     public boolean isValid(Move move) {
