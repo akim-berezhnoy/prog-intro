@@ -86,6 +86,7 @@ public class Main {
                     System.exit(0);
                 }
             }
+            turnsOrder.addLast(turnsOrder.removeFirst());
         }
     }
 }
