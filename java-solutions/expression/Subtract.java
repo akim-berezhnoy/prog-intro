@@ -10,8 +10,13 @@ public class Subtract extends BinaryOperation {
     }
 
     @Override
-    public int evaluate(int variable) {
-        return getLeftOperand().evaluate(variable) - getRightOperand().evaluate(variable);
+    public int evaluate(int x) {
+        return getLeftOperand().evaluate(x) - getRightOperand().evaluate(x);
+    }
+
+    @Override
+    public double evaluate(double x) {
+        return getLeftOperand().evaluate(x) - getRightOperand().evaluate(x);
     }
 
     @Override

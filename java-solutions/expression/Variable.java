@@ -1,7 +1,5 @@
 package expression;
 
-import java.util.Objects;
-
 public class Variable implements GigachadExpression {
     private final String name;
 
@@ -10,8 +8,13 @@ public class Variable implements GigachadExpression {
     }
 
     @Override
-    public int evaluate(int variable) {
-        return variable;
+    public int evaluate(int x) {
+        return x;
+    }
+
+    @Override
+    public double evaluate(double x) {
+        return x;
     }
 
     @Override
@@ -32,7 +35,7 @@ public class Variable implements GigachadExpression {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof final Variable that) {
-            return Objects.equals(that.name, this.name);
+            return that.name.equals(this.name);
         }
         return false;
     }

@@ -1,25 +1,37 @@
 package expression;
 
 public class Const implements GigachadExpression {
-    private final int value;
+    private final double value;
+    private final String stringValue;
 
     public Const(int value) {
         this.value = value;
+        stringValue = String.valueOf(value);
+    }
+
+    public Const(double value) {
+        this.value = value;
+        stringValue = String.valueOf(value);
     }
 
     @Override
     public int evaluate(int x) {
+        return (int)value;
+    }
+
+    @Override
+    public double evaluate(double x) {
         return value;
     }
 
     @Override
     public int evaluate(int x, int y, int z) {
-        return value;
+        return (int)value;
     }
 
     @Override
     public int hashCode() {
-        return value;
+        return Double.hashCode(value);
     }
 
     @Override
@@ -32,6 +44,6 @@ public class Const implements GigachadExpression {
 
     @Override
     public String toString() {
-        return String.valueOf(value);
+        return stringValue;
     }
 }

@@ -1,3 +1,4 @@
 package expression;
 
-public interface GigachadExpression extends Expression, TripleExpression{}
+public interface GigachadExpression extends Expression, TripleExpression, DoubleExpression {
+}

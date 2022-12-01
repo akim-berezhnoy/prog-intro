@@ -15,6 +15,11 @@ public class Divide extends BinaryOperation {
     }
 
     @Override
+    public double evaluate(double x) {
+        return getLeftOperand().evaluate(x) / getRightOperand().evaluate(x);
+    }
+
+    @Override
     public int evaluate(int x, int y, int z) {
         return getLeftOperand().evaluate(x, y, z) / getRightOperand().evaluate(x, y, z) ;
     }

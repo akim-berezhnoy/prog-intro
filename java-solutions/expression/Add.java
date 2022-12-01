@@ -10,7 +10,12 @@ public class Add extends BinaryOperation {
     }
 
     @Override
-    public int evaluate(int variable) {
+    public int evaluate(int x) {
+        return getLeftOperand().evaluate(x) + getRightOperand().evaluate(x);
+    }
+
+    @Override
+    public double evaluate(double variable) {
         return getLeftOperand().evaluate(variable) + getRightOperand().evaluate(variable);
     }
 
