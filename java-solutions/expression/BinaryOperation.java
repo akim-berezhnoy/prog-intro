@@ -25,12 +25,23 @@ public abstract class BinaryOperation implements GigachadExpression {
 
     public abstract String getSign();
 
-    public GigachadExpression getLeftOperand() {
-        return leftOperand;
+    public abstract int makeOperation(int a, int b);
+
+    public abstract double makeOperation(double a, double b);
+
+    @Override
+    public int evaluate(int x) {
+        return makeOperation(leftOperand.evaluate(x), rightOperand.evaluate(x));
     }
 
-    public GigachadExpression getRightOperand() {
-        return rightOperand;
+    @Override
+    public double evaluate(double x) {
+        return makeOperation(leftOperand.evaluate(x), rightOperand.evaluate(x));
+    }
+
+    @Override
+    public int evaluate(int x, int y, int z) {
+        return makeOperation(leftOperand.evaluate(x,y,z), rightOperand.evaluate(x,y,z));
     }
 
     @Override
