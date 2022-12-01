@@ -64,13 +64,11 @@ public abstract class BinaryOperation implements GigachadExpression {
         boolean leftBrackets = prior(leftOperand) > prior(this); // Если приоретет левого операнда слабее - скобочки
         boolean rightBrackets = prior(rightOperand) > prior(this);
         // Свойства вычитания
-        if (this instanceof Subtract
-                && (rightOperand instanceof Subtract || prior(this) == prior(rightOperand))) {
+        if (this instanceof Subtract && prior(this) == prior(rightOperand)) {
             rightBrackets = true;
         }
         // Свойства деления
-        if (this instanceof Divide
-                || rightOperand instanceof Divide && prior(rightOperand) == prior(this)) {
+        if (this instanceof Divide || rightOperand instanceof Divide && prior(rightOperand) == prior(this)) {
             rightBrackets = true;
         }
         // Проверка на константы
