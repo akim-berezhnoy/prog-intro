@@ -22,6 +22,16 @@ public class MyScanner implements AutoCloseable {
     public boolean hasNextInCurrentLine(Criteria criteria) throws IOException {
         if (capacity == -1) return false;
         while (thisCharIsInvalid(criteria)) {
+            if (buffer[iterator] == '\r') {
+                iterator++;
+                if (iterator == capacity) readNewBuffer();
+                if (buffer[iterator] == '\n') {
+                    iterator++;
+                    if (iterator == capacity) readNewBuffer();
+                    return false;
+                }
+                return false;
+            }
             if (buffer[iterator] == '\n') {
                 iterator++;
                 if (iterator == capacity) readNewBuffer();
