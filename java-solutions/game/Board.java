@@ -1,4 +1,4 @@
-package mnkGame;
+package game;
 
 public interface Board {
     Position getPosition();

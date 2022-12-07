@@ -1,4 +1,4 @@
-package mnkGame;
+package game;
 
 public abstract class Player {
     final int id;

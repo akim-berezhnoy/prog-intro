@@ -1,4 +1,4 @@
-package mnkGame;
+package game;
 
 import java.util.Random;
 

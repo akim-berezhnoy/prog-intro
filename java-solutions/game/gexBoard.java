@@ -1,28 +1,24 @@
-package mnkGame;
+package game;
 
 import java.util.*;
 
-public class mnkBoard implements Board, Position {
+public class gexBoard implements Board, Position {
 
     final private int m;
-    final private int n;
     final private int k;
 
     private int blanks;
 
-    private final int STREAK_TO_EXTRA_MOVE = 4;
-
     private final Cell[][] field;
     private final Deque<Symbol> turns;
 
-    public mnkBoard(int m, int n, int k, Deque<Symbol> turns) {
+    public gexBoard(int m, int k, Deque<Symbol> turns) {
         this.m = m;
-        this.n = n;
         this.k = k;
-        this.blanks = m*n;
-        this.field = new Cell[m][n];
+        this.blanks = m*m;
+        this.field = new Cell[m][m];
         for (Cell[] row : field) {
-            for (int col = 0; col < n; col++) {
+            for (int col = 0; col < m; col++) {
                 row[col] = new Cell(Symbol.BlANK);
             }
         }
@@ -36,7 +32,7 @@ public class mnkBoard implements Board, Position {
 
     @Override
     public int getN() {
-        return n;
+        return m;
     }
 
     public Cell getCell(int row, int col) {
@@ -51,6 +47,7 @@ public class mnkBoard implements Board, Position {
         turns.removeFirst();
     }
 
+
     @Override
     public Position getPosition() {
         return this;
@@ -62,21 +59,18 @@ public class mnkBoard implements Board, Position {
             return Result.LOSE;
         }
         field[move.getRow()][move.getCol()].setCondition(move.getSymbol());
-        if (isStreakMove(move, k)) {
+        if (isWinningMove(move)) {
             return Result.WIN;
         }
         this.blanks--;
         if (blanks == 0) {
             return Result.DRAW;
         }
-        if (isStreakMove(move, STREAK_TO_EXTRA_MOVE)) {
-            return Result.EXTRA;
-        }
         turns.addLast(turns.removeFirst());
         return Result.UNKNOWN;
     }
 
-    private boolean isStreakMove(Move lastMove, int st) {
+    private boolean isWinningMove(Move lastMove) {
         int row = lastMove.getRow();
         int col = lastMove.getCol();
         int streak = 0;
@@ -87,37 +81,21 @@ public class mnkBoard implements Board, Position {
             row--;
             streak++;
         }
-        if (streak >= st) {
+        if (streak >= k) {
             return true;
         }
         //
         row = lastMove.getRow();
         col = lastMove.getCol();
         streak = 0;
-        while (col < n-1 && field[row][col+1].getCondition() == lastMove.getSymbol()) {
+        while (col < m-1 && field[row][col+1].getCondition() == lastMove.getSymbol()) {
             col++;
         }
         while (col >= 0 && field[row][col].getCondition() == lastMove.getSymbol()) {
             col--;
             streak++;
         }
-        if (streak >= st) {
-            return true;
-        }
-        //
-        row = lastMove.getRow();
-        col = lastMove.getCol();
-        streak = 0;
-        while (row < m-1 && col < n-1 && field[row+1][col+1].getCondition() == lastMove.getSymbol()) {
-            row++;
-            col++;
-        }
-        while (row >= 0 && col >= 0 && field[row][col].getCondition() == lastMove.getSymbol()) {
-            row--;
-            col--;
-            streak++;
-        }
-        if (streak >= st) {
+        if (streak >= k) {
             return true;
         }
         //
@@ -128,49 +106,53 @@ public class mnkBoard implements Board, Position {
             row++;
             col--;
         }
-        while (row >= 0 && col <= n-1 && field[row][col].getCondition() == lastMove.getSymbol()) {
+        while (row >= 0 && col <= m-1 && field[row][col].getCondition() == lastMove.getSymbol()) {
             row--;
             col++;
             streak++;
         }
-        return streak >= st;
+        return streak >= k;
     }
 
     public boolean isValid(Move move) {
         return
                 0 <= move.getRow() && move.getRow() < m &&
-                0 <= move.getCol() && move.getCol() < n &&
-                field[move.getRow()][move.getCol()].getCondition() == Symbol.BlANK &&
-                move.getSymbol() == turns.getFirst();
+                        0 <= move.getCol() && move.getCol() < m &&
+                        field[move.getRow()][move.getCol()].getCondition() == Symbol.BlANK &&
+                        move.getSymbol() == turns.getFirst();
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("  ");
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < m; i++) {
             if (i < 10) {
                 sb.append(" ");
             }
             sb.append(i+1);
         }
-        sb.append("\n  +");
-        for (int i = 0; i < n; i++) {
-            sb.append("--");
-        }
+        sb.append("\n  ");
+        sb.append("__".repeat(Math.max(0, m)));
+        sb.append("__");
         sb.append('\n');
         for (int row = 0; row < m; row++) {
+            sb.append(" ".repeat(row));
             if (row < 9) {
                 sb.append(" ");
             }
-            sb.append(row+1).append('|');
-            for (int col = 0; col < n; col++) {
+            sb.append(row+1).append('\\').append(' ');
+            for (int col = 0; col < m; col++) {
                 sb.append(field[row][col].getCondition().value);
                 if (field[row][col].getCondition().value.length() == 1) {
                     sb.append(" ");
                 }
             }
-            sb.append('\n');
+            sb.append("\\ \n");
         }
+        sb.append(" ".repeat(Math.max(0, m)));
+        sb.append("  ");
+        sb.append("‾‾".repeat(Math.max(0, m)));
+        sb.append("‾‾");
         return sb.toString();
     }
 }

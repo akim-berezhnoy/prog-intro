@@ -1,4 +1,4 @@
-package mnkGame;
+package game;
 
 public class SigmaPlayer extends Player{
     public SigmaPlayer(int id) {
