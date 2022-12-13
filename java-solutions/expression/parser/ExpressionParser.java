@@ -15,8 +15,8 @@ public class ExpressionParser implements TripleParser {
 
     private static class StaticExpressionParser extends BaseParser {
 
-        private static final PrefixTree binaryGrammar = new PrefixTree(Set.of("+", "-", "/", "*", ")"));
-        private static final PrefixTree unaryGrammar = new PrefixTree(Set.of("-", "x", "y", "z", "("));
+        private static final PrefixTree binarySamples = new PrefixTree(Set.of("+", "-", "/", "*", ")"));
+        private static final PrefixTree unarySamples = new PrefixTree(Set.of("-", "x", "y", "z", "("));
 
         public StaticExpressionParser(CharSource source) {
             super(source);
@@ -125,14 +125,14 @@ public class ExpressionParser implements TripleParser {
             if (expectingUnary) {
                 takeDigits(lexem);
                 if (lexem.isEmpty()) {
-                    addLexemPart(unaryGrammar, lexem);
+                    addLexemPart(unarySamples, lexem);
                 }
                 if (lexem.toString().equals("(")) {
                     return lexem.toString();
                 }
                 takeDigits(lexem);
             } else {
-                addLexemPart(binaryGrammar, lexem);
+                addLexemPart(binarySamples, lexem);
             }
             return lexem.toString();
         }

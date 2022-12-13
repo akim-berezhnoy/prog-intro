@@ -53,7 +53,7 @@ public abstract class UnaryOperation implements Expr {
 
     @Override
     public String toMiniString() {
-        if (operand instanceof BinaryOperation) {
+        if (operand.getPriority() > getPriority()) {
             return getSign() + "(" + operand.toMiniString() + ")";
         } else {
             return getSign() + " " + operand.toMiniString();
