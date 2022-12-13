@@ -29,9 +29,4 @@ public class Negate extends UnaryOperation {
     public int makeOperation(int a) {
         return -a;
     }
-
-    @Override
-    public double makeOperation(double a) {
-        return -a;
-    }
 }

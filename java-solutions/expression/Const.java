@@ -1,15 +1,10 @@
 package expression;
 
 public class Const implements Expr {
-    private final double value;
+    private final int value;
     private final String stringValue;
 
     public Const(int value) {
-        this.value = value;
-        stringValue = String.valueOf(value);
-    }
-
-    public Const(double value) {
         this.value = value;
         stringValue = String.valueOf(value);
     }
@@ -31,17 +26,12 @@ public class Const implements Expr {
 
     @Override
     public int evaluate(int x) {
-        return (int)value;
-    }
-
-    @Override
-    public double evaluate(double x) {
         return value;
     }
 
     @Override
     public int evaluate(int x, int y, int z) {
-        return (int)value;
+        return value;
     }
 
     @Override

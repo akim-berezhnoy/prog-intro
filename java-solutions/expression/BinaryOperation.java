@@ -14,15 +14,8 @@ public abstract class BinaryOperation implements Expr {
 
     public abstract int makeOperation(int a, int b);
 
-    public abstract double makeOperation(double a, double b);
-
     @Override
     public int evaluate(int x) {
-        return makeOperation(leftOperand.evaluate(x), rightOperand.evaluate(x));
-    }
-
-    @Override
-    public double evaluate(double x) {
         return makeOperation(leftOperand.evaluate(x), rightOperand.evaluate(x));
     }
 
@@ -58,10 +51,8 @@ public abstract class BinaryOperation implements Expr {
     public String toMiniString() {
         boolean leftBrackets = leftOperand.getPriority() > this.getPriority();
         boolean rightBrackets = rightOperand.getPriority() > this.getPriority();
-        if (rightOperand.getPriority() == this.getPriority()) {
-            if (!this.isRightAssociative() || !rightOperand.isLeftAssociative()) {
-                rightBrackets = true;
-            }
+        if (rightOperand.getPriority() == this.getPriority() && (!this.isRightAssociative() || !rightOperand.isLeftAssociative())) {
+            rightBrackets = true;
         }
         return (leftBrackets ? '(' : "") + leftOperand.toMiniString() + (leftBrackets ? ')' : "") +
                 ' ' + getSign() + ' ' +

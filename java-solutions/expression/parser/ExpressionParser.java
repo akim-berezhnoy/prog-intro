@@ -15,49 +15,120 @@ public class ExpressionParser implements TripleParser {
 
     private static class StaticExpressionParser extends BaseParser {
 
-        private static final PrefixTree binarySamples = new PrefixTree(Set.of("+", "-", "/", "*", ")"));
-        private static final PrefixTree unarySamples = new PrefixTree(Set.of("-", "x", "y", "z", "("));
+        private static final PrefixTree binaryTokens = new PrefixTree(Set.of("+", "-", "/", "*", ")"));
+        private static final PrefixTree unaryTokens = new PrefixTree(Set.of("-", "x", "y", "z", "("));
 
         public StaticExpressionParser(CharSource source) {
             super(source);
         }
 
+        /*
+         * Main ExpressionParser method. Parses till source end or closing bracket.
+         * May be executed recursively inside brackets to parse full inside block.
+         */
         private Expr parseExpression() {
-            Stack<Expr> units = new Stack<>();
-            units.push(parseUnit());
-            Stack<String> operations = new Stack<>();
+            Stack<Expr> operands = new Stack<>();
+            Stack<String> operators = new Stack<>();
+            operands.push(nextOperand());
+            skipWhitespace(); //SKIP WHITESPACE
             while (!eof()) {
-                /* after-unit tokens:
-                 *
-                 * 1. )
-                 * 2. +
-                 * 3. -
-                 * 4. *
-                 * 5. /
-                 *
-                 */
-                String token = nextLexem(false);
-                skipWhitespace();
+                String token = parseToken(binaryTokens);
+                skipWhitespace(); //SKIP WHITESPACE
                 if (token.equals(")")) {
                     break;
                 }
                 int currentTokenPriority = priority(token);
-                while (!operations.isEmpty() && priority(operations.peek()) <= currentTokenPriority) {
-                    collapse(units, operations);
+                while (!operators.isEmpty() && priority(operators.peek()) <= currentTokenPriority) {
+                    collectDescendingOperatorsOperand(operands, operators);
                 }
-                units.push(parseUnit());
-                operations.push(token);
+                operands.push(nextOperand());
+                skipWhitespace(); //SKIP WHITESPACE
+                operators.push(token);
             }
-            while (!operations.isEmpty()) {
-                collapse(units, operations);
+            while (!operators.isEmpty()) {
+                collectDescendingOperatorsOperand(operands, operators);
             }
-            return units.pop();
+            return operands.pop();
         }
 
-        private void collapse(Stack<Expr> units, Stack<String> operations) {
+        /*
+         * Collects operators from the top of the operator stack and pushes created operands in the operand stack.
+         */
+        private void collectDescendingOperatorsOperand(Stack<Expr> units, Stack<String> operations) {
             do {
                 units.push(createOperation(operations.pop(), units.pop(), units.pop()));
             } while (!operations.isEmpty() && priority(operations.peek()) <= units.peek().getPriority());
+        }
+
+        /*
+         * Transforms an operand in expression. (Expr)
+         */
+        private Expr nextOperand() {
+            String operand = parseOperand();
+            if (isNumber(operand)) {
+                // Constants
+                return new Const(Integer.parseInt(operand));
+            } else {
+                return switch (operand) {
+                    // Blocks
+                    case "(" -> parseExpression();
+                    // Variables
+                    case "x", "y", "z" -> new Variable(operand);
+                    // UnaryOperations
+                    case "-" -> createOperation(operand, nextOperand());
+                    default -> throw error("Expected unit (block, variable, constant), but found nothing.");
+                };
+            }
+        }
+
+        /*
+         * Gobs next operand. (String)
+         *
+         * operands:
+         *     signed constants
+         *     bracket blocks
+         *     variables
+         *     operands, which were produced by applying upcoming unary operation
+         */
+        private String parseOperand() {
+            skipWhitespace(); //SKIP WHITESPACE
+            StringBuilder operand = new StringBuilder();
+            if (!between('0','9')) {
+                operand.append(parseToken(unaryTokens));
+            }
+            if (operand.toString().equals("(")) {
+                return operand.toString();
+            }
+            takeDigits(operand);
+            return operand.toString();
+        }
+
+        /*
+         * Gobs next token. (String)
+         */
+        private String parseToken(PrefixTree grammar) {
+            skipWhitespace(); //SKIP WHITESPACE
+            StringBuilder token = new StringBuilder();
+            while (!grammar.contains(token.toString()) || (!eof() && grammar.hasPrefix(token.toString() + peek()))) {
+                token.append(take());
+            }
+            return token.toString();
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        /*
+         * auxiliary methods (number checking, expressions creation, priority management)
+         */
+
+        private boolean isNumber(String s) {
+            return Character.isDigit(s.charAt(0)) || (s.length() > 1 && Character.isDigit(s.charAt(1)));
+//            try {
+//                Integer.parseInt(s);
+//                return true;
+//            } catch (NumberFormatException e) {
+//                return false;
+//            }
         }
 
         private int priority(String operation) {
@@ -76,71 +147,15 @@ public class ExpressionParser implements TripleParser {
                 case "-" -> new Subtract(left, right);
                 case "*" -> new Multiply(left, right);
                 case "/" -> new Divide(left, right);
-                default -> throw new UnsupportedOperationException("Unknown binary operator: " + operator);
+                default -> throw new UnsupportedOperationException("Unsupported binary operator: " + operator);
             };
         }
 
         private Expr createOperation(String operator, Expr operand) {
             return switch (operator) {
                 case "-" -> new Negate(operand);
-                default -> throw new UnsupportedOperationException("Unknown binary operator: " + operator);
+                default -> throw new UnsupportedOperationException("Unsupported binary operator: " + operator);
             };
-        }
-
-        /* Unit cases:
-         *
-         * 1. const
-         * 2. x|y|z
-         * 3. (expression)
-         * 4. - unit
-         *
-         */
-
-        private Expr parseUnit() {
-            String token = nextLexem(true);
-            skipWhitespace();
-            if (isNumber(token)) {
-                // Constant
-                return new Const(Integer.parseInt(token));
-            } else {
-                return switch (token) {
-                    // Variable
-                    case "x", "y", "z" -> new Variable(token);
-                    // Block
-                    case "(" -> parseExpression();
-                    // Unary
-                    case "-" -> createOperation(token, parseUnit());
-                    default -> throw error("Expected unit (block, variable, constant), but found nothing.");
-                };
-            }
-        }
-
-        private boolean isNumber(String s) {
-            return Character.isDigit(s.charAt(0)) || s.startsWith("-") && s.length() > 1;
-        }
-
-        private String nextLexem(boolean expectingUnary) {
-            skipWhitespace();
-            StringBuilder lexem = new StringBuilder();
-            if (expectingUnary) {
-                takeDigits(lexem);
-                if (lexem.isEmpty()) {
-                    addLexemPart(unarySamples, lexem);
-                }
-                if (lexem.toString().equals("(")) {
-                    return lexem.toString();
-                }
-                takeDigits(lexem);
-            } else {
-                addLexemPart(binarySamples, lexem);
-            }
-            return lexem.toString();
-        }
-
-        private void addLexemPart(PrefixTree grammar, StringBuilder lexem) {
-            while (!grammar.contains(lexem.toString()) || (!eof() && grammar.hasPrefix(lexem.toString() + peek()))) {
-                lexem.append(take());
-            }
         }
     }
 }

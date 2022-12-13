@@ -33,9 +33,4 @@ public class Subtract extends BinaryOperation {
     public int makeOperation(int a, int b) {
         return a - b;
     }
-
-    @Override
-    public double makeOperation(double a, double b) {
-        return a - b;
-    }
 }

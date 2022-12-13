@@ -28,11 +28,6 @@ public class Variable implements Expr {
     }
 
     @Override
-    public double evaluate(double x) {
-        return x;
-    }
-
-    @Override
     public int evaluate(int x, int y, int z) {
         return switch (name) {
             case "x" -> x;

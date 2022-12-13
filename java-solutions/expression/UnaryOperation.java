@@ -13,15 +13,8 @@ public abstract class UnaryOperation implements Expr {
 
     public abstract int makeOperation(int a);
 
-    public abstract double makeOperation(double a);
-
     @Override
     public int evaluate(int x) {
-        return makeOperation(operand.evaluate(x));
-    }
-
-    @Override
-    public double evaluate(double x) {
         return makeOperation(operand.evaluate(x));
     }
 
