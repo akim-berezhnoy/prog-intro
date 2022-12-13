@@ -1,6 +1,6 @@
 package expression;
 
-public class Const implements GigachadExpression {
+public class Const implements Expr {
     private final double value;
     private final String stringValue;
 
@@ -12,6 +12,21 @@ public class Const implements GigachadExpression {
     public Const(double value) {
         this.value = value;
         stringValue = String.valueOf(value);
+    }
+
+    @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    @Override
+    public boolean isLeftAssociative() {
+        return true;
+    }
+
+    @Override
+    public boolean isRightAssociative() {
+        return true;
     }
 
     @Override

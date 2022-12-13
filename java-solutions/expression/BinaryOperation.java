@@ -1,29 +1,16 @@
 package expression;
 
-import java.util.HashMap;
+public abstract class BinaryOperation implements Expr {
+    private final Expr leftOperand;
+    private final Expr rightOperand;
 
-public abstract class BinaryOperation implements GigachadExpression {
-
-    private static final HashMap<String, Integer> priority = new HashMap<>();
-
-    static {
-        priority.put(Add.class.getName(), 2);
-        priority.put(Subtract.class.getName(), 2);
-        priority.put(Divide.class.getName(), 1);
-        priority.put(Multiply.class.getName(), 1);
-        priority.put(Variable.class.getName(), 0);
-        priority.put(Const.class.getName(), 0);
-    }
-
-    private final GigachadExpression leftOperand;
-    private final GigachadExpression rightOperand;
-
-    public BinaryOperation(GigachadExpression leftOperand, GigachadExpression rightOperand) {
+    public BinaryOperation(Expr leftOperand, Expr rightOperand) {
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
     }
 
     public abstract String getSign();
+    public abstract int getPriority();
 
     public abstract int makeOperation(int a, int b);
 
@@ -66,28 +53,15 @@ public abstract class BinaryOperation implements GigachadExpression {
         return "(" + leftOperand + " " + getSign() + " " + rightOperand + ")";
     }
 
-    public static int prior(Expression e) {
-        return priority.get(e.getClass().getName());
-    }
 
     @Override
     public String toMiniString() {
-        boolean leftBrackets = prior(leftOperand) > prior(this); // Если приоретет левого операнда слабее - скобочки
-        boolean rightBrackets = prior(rightOperand) > prior(this);
-        // Свойства вычитания
-        if (this instanceof Subtract && prior(this) == prior(rightOperand)) {
-            rightBrackets = true;
-        }
-        // Свойства деления
-        if (this instanceof Divide || rightOperand instanceof Divide && prior(rightOperand) == prior(this)) {
-            rightBrackets = true;
-        }
-        // Проверка на константы
-        if (leftOperand instanceof Const || leftOperand instanceof Variable) {
-            leftBrackets = false;
-        }
-        if (rightOperand instanceof Const || rightOperand instanceof Variable) {
-            rightBrackets = false;
+        boolean leftBrackets = leftOperand.getPriority() > this.getPriority();
+        boolean rightBrackets = rightOperand.getPriority() > this.getPriority();
+        if (rightOperand.getPriority() == this.getPriority()) {
+            if (!this.isRightAssociative() || !rightOperand.isLeftAssociative()) {
+                rightBrackets = true;
+            }
         }
         return (leftBrackets ? '(' : "") + leftOperand.toMiniString() + (leftBrackets ? ')' : "") +
                 ' ' + getSign() + ' ' +

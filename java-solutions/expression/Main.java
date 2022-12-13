@@ -12,5 +12,6 @@ public class Main {
                                              new Variable("x"))),
                              new Const(1));
         System.out.println(exp.evaluate(Integer.parseInt(args[0])));
+//        System.out.println(new Subtract(new Subtract(new Const(1), new Const(2)), new Const(3)).toMiniString());
     }
 }

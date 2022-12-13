@@ -1,10 +1,25 @@
 package expression;
 
-public class Variable implements GigachadExpression {
+public class Variable implements Expr {
     private final String name;
 
     public Variable(String name) {
         this.name = name;
+    }
+
+    @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    @Override
+    public boolean isLeftAssociative() {
+        return true;
+    }
+
+    @Override
+    public boolean isRightAssociative() {
+        return true;
     }
 
     @Override
