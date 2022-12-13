@@ -1,7 +1,7 @@
 package expression;
 
 public class Add extends BinaryOperation {
-    public Add(Expr e1, Expr e2) {
+    public Add(Express e1, Express e2) {
         super(e1, e2);
     }
 

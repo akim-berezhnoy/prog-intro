@@ -1,6 +1,6 @@
 package expression;
 
-public class Const implements Expr {
+public class Const implements Express {
     private final int value;
     private final String stringValue;
 

@@ -1,7 +1,7 @@
 package expression;
 
 public class Negate extends UnaryOperation {
-    public Negate(Expr operand) {
+    public Negate(Express operand) {
         super(operand);
     }
 

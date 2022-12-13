@@ -1,10 +1,10 @@
 package expression;
 
-public abstract class BinaryOperation implements Expr {
-    private final Expr leftOperand;
-    private final Expr rightOperand;
+public abstract class BinaryOperation implements Express {
+    private final Express leftOperand;
+    private final Express rightOperand;
 
-    public BinaryOperation(Expr leftOperand, Expr rightOperand) {
+    public BinaryOperation(Express leftOperand, Express rightOperand) {
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
     }

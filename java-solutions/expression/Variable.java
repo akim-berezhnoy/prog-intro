@@ -1,6 +1,6 @@
 package expression;
 
-public class Variable implements Expr {
+public class Variable implements Express {
     private final String name;
 
     public Variable(String name) {

@@ -1,7 +1,7 @@
 package expression;
 
 public class Divide extends BinaryOperation {
-    public Divide(Expr e1, Expr e2) {
+    public Divide(Express e1, Express e2) {
         super(e1, e2);
     }
 

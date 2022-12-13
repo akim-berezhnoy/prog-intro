@@ -26,8 +26,8 @@ public class ExpressionParser implements TripleParser {
          * Main ExpressionParser method. Parses till source end or closing bracket.
          * May be executed recursively inside brackets to parse full inside block.
          */
-        private Expr parseExpression() {
-            Stack<Expr> operands = new Stack<>();
+        private Express parseExpression() {
+            Stack<Express> operands = new Stack<>();
             Stack<String> operators = new Stack<>();
             operands.push(nextOperand());
             skipWhitespace(); //SKIP WHITESPACE
@@ -54,7 +54,7 @@ public class ExpressionParser implements TripleParser {
         /*
          * Collects operators from the top of the operator stack and pushes created operands in the operand stack.
          */
-        private void collectDescendingOperatorsOperand(Stack<Expr> units, Stack<String> operations) {
+        private void collectDescendingOperatorsOperand(Stack<Express> units, Stack<String> operations) {
             do {
                 units.push(createOperation(operations.pop(), units.pop(), units.pop()));
             } while (!operations.isEmpty() && priority(operations.peek()) <= units.peek().getPriority());
@@ -63,7 +63,7 @@ public class ExpressionParser implements TripleParser {
         /*
          * Transforms an operand in expression. (Expr)
          */
-        private Expr nextOperand() {
+        private Express nextOperand() {
             String operand = parseOperand();
             if (isNumber(operand)) {
                 // Constants
@@ -141,7 +141,7 @@ public class ExpressionParser implements TripleParser {
             };
         }
 
-        private Expr createOperation(String operator, Expr right, Expr left) {
+        private Express createOperation(String operator, Express right, Express left) {
             return switch (operator) {
                 case "+" -> new Add(left, right);
                 case "-" -> new Subtract(left, right);
@@ -151,7 +151,7 @@ public class ExpressionParser implements TripleParser {
             };
         }
 
-        private Expr createOperation(String operator, Expr operand) {
+        private Express createOperation(String operator, Express operand) {
             return switch (operator) {
                 case "-" -> new Negate(operand);
                 default -> throw new UnsupportedOperationException("Unsupported binary operator: " + operator);

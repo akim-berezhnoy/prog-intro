@@ -1,7 +1,7 @@
 package expression;
 
 public class Multiply extends BinaryOperation {
-    public Multiply(Expr e1, Expr e2) {
+    public Multiply(Express e1, Express e2) {
         super(e1, e2);
     }
 

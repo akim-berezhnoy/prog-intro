@@ -1,10 +1,10 @@
 package expression;
 
-public abstract class UnaryOperation implements Expr {
+public abstract class UnaryOperation implements Express {
 
-    private final Expr operand;
+    private final Express operand;
 
-    public UnaryOperation(Expr operand) {
+    public UnaryOperation(Express operand) {
         this.operand = operand;
     }
 
