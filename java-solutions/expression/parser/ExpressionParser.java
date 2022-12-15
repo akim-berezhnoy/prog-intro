@@ -98,9 +98,9 @@ public class ExpressionParser implements TripleParser {
             skipWhitespace(); //SKIP WHITESPACE
             StringBuilder operand = new StringBuilder();
             if (!between('0','9')) {
-                operand.append(parseToken(unaryTokens));
+                operand.append(parseToken(unaryTokens)); // x
             }
-            if (operand.toString().equals("(")) {
+            if (!(operand.isEmpty() || operand.toString().equals("-"))) {
                 return operand.toString();
             }
             takeDigits(operand);
