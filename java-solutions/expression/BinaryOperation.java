@@ -36,7 +36,7 @@ public abstract class BinaryOperation implements Express {
         if (obj instanceof final BinaryOperation that) {
             return this.leftOperand.equals(that.leftOperand) &&
                     this.rightOperand.equals(that.rightOperand)&&
-                    that.getClass().getName().equals(this.getClass().getName());
+                    that.getClass().equals(this.getClass());
         }
         return false;
     }

@@ -4,6 +4,8 @@ import expression.*;
 
 import java.util.*;
 
+import java.util.Set;
+
 public class ExpressionParser implements TripleParser {
     public static TripleExpression parse(final CharSource source) {
         return new StaticExpressionParser(source).parseExpression();
@@ -15,8 +17,10 @@ public class ExpressionParser implements TripleParser {
 
     private static class StaticExpressionParser extends BaseParser {
 
-        private static final PrefixTree binaryTokens = new PrefixTree(Set.of("+", "-", "/", "*", ")"));
-        private static final PrefixTree unaryTokens = new PrefixTree(Set.of("-", "x", "y", "z", "("));
+        private static final PrefixTree binaryTokens = new PrefixTree(
+                Set.of("+", "-", "/", "*", "clear", "set", ")"));
+        private static final PrefixTree unaryTokens = new PrefixTree(
+                Set.of("-", "x", "y", "z", "count", "reverse", "("));
 
         public StaticExpressionParser(CharSource source) {
             super(source);
@@ -75,7 +79,7 @@ public class ExpressionParser implements TripleParser {
                     // Variables
                     case "x", "y", "z" -> new Variable(operand);
                     // UnaryOperations
-                    case "-" -> createOperation(operand, nextOperand());
+                    case "-", "count", "reverse" -> createOperation(operand, nextOperand());
                     default -> throw error("Expected unit (block, variable, constant), but found nothing.");
                 };
             }
@@ -137,6 +141,11 @@ public class ExpressionParser implements TripleParser {
                 case "-" -> Subtract.priority();
                 case "*" -> Multiply.priority();
                 case "/" -> Divide.priority();
+                case "clear" -> Clear.priority();
+                case "set" -> expression.Set.priority();
+                //
+                // HERE
+                //
                 default -> 0;
             };
         }
@@ -147,6 +156,11 @@ public class ExpressionParser implements TripleParser {
                 case "-" -> new Subtract(left, right);
                 case "*" -> new Multiply(left, right);
                 case "/" -> new Divide(left, right);
+                case "clear" -> new Clear(left, right);
+                case "set" -> new expression.Set(left, right);
+                //
+                // HERE
+                //
                 default -> throw new UnsupportedOperationException("Unsupported binary operator: " + operator);
             };
         }
@@ -154,6 +168,11 @@ public class ExpressionParser implements TripleParser {
         private Express createOperation(String operator, Express operand) {
             return switch (operator) {
                 case "-" -> new Negate(operand);
+                case "count" -> new Count(operand);
+                case "reverse" -> new Reverse(operand);
+                //
+                // HERE
+                //
                 default -> throw new UnsupportedOperationException("Unsupported binary operator: " + operator);
             };
         }

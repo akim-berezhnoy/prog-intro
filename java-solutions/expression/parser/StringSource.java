@@ -9,6 +9,8 @@ public class StringSource implements CharSource {
 
     public StringSource(final String data) {
         this.data = data;
+//        System.out.println(data);
+//        System.out.println("*****");
     }
 
     @Override
